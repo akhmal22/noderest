@@ -1,6 +1,4 @@
-const url = require('url');
-const connection = require('./connection.js');
-
+const db = require('./db.js');
 
 const availableEndpoints = [
   {
@@ -21,19 +19,18 @@ const availableEndpoints = [
   }
 ]
 
-
 const NS_PER_SEC = 1e9;
 const time = process.hrtime();
 
 
 exports.getUsers = function(req, res) {
-  connection.query('SELECT * FROM kriminal', function(error, rows, fields){
+  db.query('SELECT * FROM kriminal', function(error, rows, fields){
     if(error){
       var response = [
         {
-          "message": "GET operation failed!"
+          "message": "GET operation failed!",
+          "status": error.code
         },
-        error.code
       ];
       res.statusCode = error.code;
       res.setHeader('content-Type', 'Application/json');
@@ -41,9 +38,10 @@ exports.getUsers = function(req, res) {
     }else{
       var response = [
         {
-          "message": "GET operation success!"
+          "message": "GET operation success!",
+          "status": 200
         },
-        rows
+        rows,
       ];
       res.statusCode = 200;
       res.setHeader('content-Type', 'Application/json');
@@ -62,13 +60,14 @@ exports.createUser = function(req, res) {
   req.on('end', function () {
     postBody = JSON.parse(body);
 
-    connection.query('INSERT INTO kriminal (nama, umur, tindak, status) VALUES (?,?,?,?)',
+    db.query('INSERT INTO kriminal (nama, umur, tindak, status) VALUES (?,?,?,?)',
     [postBody.nama, postBody.umur, postBody.tindak, postBody.status],
     function(error, rows, fields){
       if(error){
         var response = [
           {
-            "message": "POST operation failed!"
+            "message": "POST operation failed!",
+            "status": error.code
           },
           error.code
         ];
@@ -78,7 +77,8 @@ exports.createUser = function(req, res) {
       }else{
         var response = [
           {
-            "message": "POST operation success!"
+            "message": "POST operation success!",
+            "status": 200
           }
         ];
         res.statusCode = 200;
@@ -101,13 +101,14 @@ exports.updateUser = function(req, res) {
   req.on('end', function () {
     putBody = JSON.parse(body);
 
-    connection.query('UPDATE kriminal SET status = ? WHERE id = ?',
+    db.query('UPDATE kriminal SET status = ? WHERE id = ?',
     [putBody.status, parseInt(params)],
     function(error, rows, fields){
       if(error){
         var response = [
           {
-            "message": "PUT operation failed!"
+            "message": "PUT operation failed!",
+            "status": error.code
           },
           error.code
         ];
@@ -117,7 +118,8 @@ exports.updateUser = function(req, res) {
       }else{
         var response = [
           {
-            "message": "PUT operation success!"
+            "message": "PUT operation success!",
+            "status": 200
           }
         ];
         res.statusCode = 200;
@@ -132,13 +134,14 @@ exports.updateUser = function(req, res) {
 exports.deleteUser = function(req, res) {
   var params = /[^/]*$/.exec(req.url)[0];
 
-  connection.query('DELETE FROM kriminal WHERE id = ?',
+  db.query('DELETE FROM kriminal WHERE id = ?',
   [ parseInt(params)],
   function(error, rows, fields){
     if(error){
       var response = [
         {
-          "message": "DELETE operation failed!"
+          "message": "DELETE operation failed!",
+          "status": error.code
         },
         error.code
       ];
@@ -148,7 +151,8 @@ exports.deleteUser = function(req, res) {
     }else{
       var response = [
         {
-          "message": "DELETE operation success!"
+          "message": "DELETE operation success!",
+          "status": 200
         }
       ];
       res.statusCode = 200;
@@ -161,7 +165,8 @@ exports.deleteUser = function(req, res) {
 exports.invalidUrl = function(req, res) {
   var response = [
     {
-    "message": "oops! that is a wrong endpoint, here are the available endpoints "
+      "message": "oops! that is a wrong endpoint, here are the available endpoints ",
+      "status": 404
     },
     availableEndpoints
   ]
