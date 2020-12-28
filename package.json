@@ -1,5 +1,13 @@
 {
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1",
     "mysql": "^2.18.1"
-  }
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "type": "module"
 }

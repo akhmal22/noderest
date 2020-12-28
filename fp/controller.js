@@ -1,4 +1,4 @@
-const db = require('./db.js');
+import connection from './connection.js';
 
 const availableEndpoints = [
   {
@@ -22,9 +22,8 @@ const availableEndpoints = [
 const NS_PER_SEC = 1e9;
 const time = process.hrtime();
 
-
-exports.getUsers = function(req, res) {
-  db.query('SELECT * FROM kriminal', function(error, rows, fields){
+export function getQuery(callback){
+  connection.query('SELECT * FROM kriminal', function(error, rows, fields){
     if(error){
       var response = [
         {
@@ -32,9 +31,7 @@ exports.getUsers = function(req, res) {
           "status": error.code
         },
       ];
-      res.statusCode = error.code;
-      res.setHeader('content-Type', 'Application/json');
-      res.end(JSON.stringify(response));
+      callback(error, null);
     }else{
       var response = [
         {
@@ -43,98 +40,61 @@ exports.getUsers = function(req, res) {
         },
         rows,
       ];
-      res.statusCode = 200;
-      res.setHeader('content-Type', 'Application/json');
-      res.end(JSON.stringify(response));
+      callback(null, response);
     }
   })
 }
 
-exports.createUser = function(req, res) {
-  var body = '';
-
-  req.on('data',  function (chunk) {
-    body += chunk;
-  });
-
-  req.on('end', function () {
-    postBody = JSON.parse(body);
-
-    db.query('INSERT INTO kriminal (nama, umur, tindak, status) VALUES (?,?,?,?)',
-    [postBody.nama, postBody.umur, postBody.tindak, postBody.status],
-    function(error, rows, fields){
-      if(error){
-        var response = [
-          {
-            "message": "POST operation failed!",
-            "status": error.code
-          },
-          error.code
-        ];
-        res.statusCode = error.code;
-        res.setHeader('content-Type', 'Application/json');
-        res.end(JSON.stringify(response));
-      }else{
-        var response = [
-          {
-            "message": "POST operation success!",
-            "status": 200
-          }
-        ];
-        res.statusCode = 200;
-        res.setHeader('content-Type', 'Application/json');
-        res.end(JSON.stringify(response));
-      }
-    })
-
+export function postQuery(body, callback){
+  connection.query('INSERT INTO kriminal (nama, umur, tindak, status) VALUES (?,?,?,?)',
+  [body.nama, body.umur, body.tindak, body.status],
+  function(error, rows, fields){
+    if(error){
+      var response = [
+        {
+          "message": "POST operation failed!",
+          "status": error.code
+        },
+      ];
+      callback(error, null);
+    }else{
+      var response = [
+        {
+          "message": "POST operation success!",
+          "status": 200
+        }
+      ];
+      callback(null, response);
+    }
   })
 }
 
-exports.updateUser = function(req, res) {
-  var body = '';
-  var params = /[^/]*$/.exec(req.url)[0];
-
-  req.on('data',  function (chunk) {
-    body += chunk;
-  });
-
-  req.on('end', function () {
-    putBody = JSON.parse(body);
-
-    db.query('UPDATE kriminal SET status = ? WHERE id = ?',
-    [putBody.status, parseInt(params)],
-    function(error, rows, fields){
-      if(error){
-        var response = [
-          {
-            "message": "PUT operation failed!",
-            "status": error.code
-          },
-          error.code
-        ];
-        res.statusCode = error.code;
-        res.setHeader('content-Type', 'Application/json');
-        res.end(JSON.stringify(response));
-      }else{
-        var response = [
-          {
-            "message": "PUT operation success!",
-            "status": 200
-          }
-        ];
-        res.statusCode = 200;
-        res.setHeader('content-Type', 'Application/json');
-        res.end(JSON.stringify(response));
-      }
-    })
-
+export function putQuery(body, params, callback){
+  connection.query('UPDATE kriminal SET status = ? WHERE id = ?',
+  [body.status, parseInt(params)],
+  function(error, rows, fields){
+    if(error){
+      var response = [
+        {
+          "message": "PUT operation failed!",
+          "status": error.code
+        },
+      ];
+      callback(error, null);
+    }else{
+      var response = [
+        {
+          "message": "PUT operation success!",
+          "status": 200
+        }
+      ];
+      callback(null, response);
+    }
   })
 }
 
-exports.deleteUser = function(req, res) {
-  var params = /[^/]*$/.exec(req.url)[0];
-
-  db.query('DELETE FROM kriminal WHERE id = ?',
+export function deleteQuery(params, callback){
+  connection.query('DELETE FROM kriminal WHERE id = ?',
   [ parseInt(params)],
   function(error, rows, fields){
     if(error){
@@ -143,11 +103,8 @@ exports.deleteUser = function(req, res) {
           "message": "DELETE operation failed!",
           "status": error.code
         },
-        error.code
       ];
-      res.statusCode = error.code;
-      res.setHeader('content-Type', 'Application/json');
-      res.end(JSON.stringify(response));
+      callback(error, null);
     }else{
       var response = [
         {
@@ -155,22 +112,19 @@ exports.deleteUser = function(req, res) {
           "status": 200
         }
       ];
-      res.statusCode = 200;
-      res.setHeader('content-Type', 'Application/json');
-      res.end(JSON.stringify(response));
+      callback(null, response);
     }
   })
 }
 
-exports.invalidUrl = function(req, res) {
+export function invalidUrl(){
   var response = [
     {
       "message": "oops! that is a wrong endpoint, here are the available endpoints ",
       "status": 404
     },
     availableEndpoints
-  ]
-  res.statusCode = 404;
-  res.setHeader('content-Type', 'Application/json');
-  res.end(JSON.stringify(response))
+  ];
+
+  return response;
 }
