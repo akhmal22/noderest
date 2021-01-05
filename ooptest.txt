@@ -1,0 +1,20 @@
+
+
+  GET method test
+    ✓ it should get GET 200 status
+
+  POST method test
+    ✓ it should get POST 201 status
+
+  PUT method test
+    ✓ it should get PUT 200 status
+
+  DELETE method test
+    ✓ it should get DELETE 200 status
+
+  wrong endpoint test
+    ✓ it should get GET 404 status
+
+
+  5 passing (52ms)
+

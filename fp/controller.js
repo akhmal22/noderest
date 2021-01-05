@@ -31,7 +31,7 @@ export function getQuery(callback){
           "status": error.code
         },
       ];
-      callback(error, null);
+      return callback(error, null);
     }else{
       var response = [
         {
@@ -40,7 +40,7 @@ export function getQuery(callback){
         },
         rows,
       ];
-      callback(null, response);
+      return callback(null, response);
     }
   })
 }
@@ -53,18 +53,18 @@ export function postQuery(body, callback){
       var response = [
         {
           "message": "POST operation failed!",
-          "status": error.code
+          "status": 400
         },
       ];
-      callback(error, null);
+      return callback(error, null);
     }else{
       var response = [
         {
           "message": "POST operation success!",
-          "status": 200
+          "status": 201
         }
       ];
-      callback(null, response);
+      return callback(null, response);
     }
   })
 }
@@ -77,10 +77,10 @@ export function putQuery(body, params, callback){
       var response = [
         {
           "message": "PUT operation failed!",
-          "status": error.code
+          "status": 400
         },
       ];
-      callback(error, null);
+      return callback(error, null);
     }else{
       var response = [
         {
@@ -88,7 +88,7 @@ export function putQuery(body, params, callback){
           "status": 200
         }
       ];
-      callback(null, response);
+      return callback(null, response);
     }
   })
 }
@@ -101,10 +101,10 @@ export function deleteQuery(params, callback){
       var response = [
         {
           "message": "DELETE operation failed!",
-          "status": error.code
+          "status": 400
         },
       ];
-      callback(error, null);
+      return callback(error, null);
     }else{
       var response = [
         {
@@ -112,7 +112,7 @@ export function deleteQuery(params, callback){
           "status": 200
         }
       ];
-      callback(null, response);
+      return callback(null, response);
     }
   })
 }

@@ -7,6 +7,8 @@ const connection = mysql.createConnection({
   database: "noderest"
 });
 
-connection.connect(function(err){if(err) throw err});
+connection.connect(function(err){
+  if(err) throw err;
+});
 
 export default connection;
