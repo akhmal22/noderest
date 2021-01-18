@@ -23,15 +23,15 @@ const NS_PER_SEC = 1e9;
 const time = process.hrtime();
 
 export function getQuery(callback){
-  connection.query('SELECT * FROM kriminal', function(error, rows, fields){
+  connection.query('SELECT * FROM kriminal WHERE id BETWEEN 1 AND 5', function(error, rows, fields){
     if(error){
       var response = [
         {
           "message": "GET operation failed!",
-          "status": error.code
+          "status": 400
         },
       ];
-      return callback(error, null);
+      return callback(error, response);
     }else{
       var response = [
         {
@@ -40,7 +40,7 @@ export function getQuery(callback){
         },
         rows,
       ];
-      return callback(null, response);
+      return callback(error, response);
     }
   })
 }
@@ -56,7 +56,7 @@ export function postQuery(body, callback){
           "status": 400
         },
       ];
-      return callback(error, null);
+      return callback(error, response);
     }else{
       var response = [
         {
@@ -64,7 +64,7 @@ export function postQuery(body, callback){
           "status": 201
         }
       ];
-      return callback(null, response);
+      return callback(error, response);
     }
   })
 }
@@ -80,7 +80,7 @@ export function putQuery(body, params, callback){
           "status": 400
         },
       ];
-      return callback(error, null);
+      return callback(error, response);
     }else{
       var response = [
         {
@@ -88,7 +88,7 @@ export function putQuery(body, params, callback){
           "status": 200
         }
       ];
-      return callback(null, response);
+      return callback(error, response);
     }
   })
 }
@@ -104,7 +104,7 @@ export function deleteQuery(params, callback){
           "status": 400
         },
       ];
-      return callback(error, null);
+      return callback(error, response);
     }else{
       var response = [
         {
@@ -112,7 +112,7 @@ export function deleteQuery(params, callback){
           "status": 200
         }
       ];
-      return callback(null, response);
+      return callback(error, response);
     }
   })
 }
@@ -120,10 +120,9 @@ export function deleteQuery(params, callback){
 export function invalidUrl(){
   var response = [
     {
-      "message": "oops! that is a wrong endpoint, here are the available endpoints ",
+      "message": "wrong endpoint",
       "status": 404
-    },
-    availableEndpoints
+    }
   ];
 
   return response;

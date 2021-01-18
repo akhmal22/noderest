@@ -23,17 +23,16 @@ const availableEndpoints = [
 ]
 
 export default class Controller{
-  constructor(req, res){
-    this.req = req;
-    this.res = res;
+  constructor(){
   }
 
   getUsers(req, res){
-    connection.query('SELECT * FROM kriminal', function(error, rows, fields){
+    connection.query('SELECT * FROM kriminal WHERE id BETWEEN 1 AND 5', function(error, rows, fields){
       if(error){
         var response = [
           {
-            "message": "GET operation failed!"
+            "message": "GET operation failed!",
+            "status": 400
           },
           error.code
         ];
@@ -43,7 +42,8 @@ export default class Controller{
       }else{
         var response = [
           {
-            "message": "GET operation success!"
+            "message": "GET operation success!",
+            "status": 200
           },
           rows
         ];
@@ -70,7 +70,8 @@ export default class Controller{
         if(error){
           var response = [
             {
-              "message": "POST operation failed!"
+              "message": "POST operation failed!",
+              "status": 400
             },
           ];
           res.statusCode = 400;
@@ -79,7 +80,8 @@ export default class Controller{
         }else{
           var response = [
             {
-              "message": "POST operation success!"
+              "message": "POST operation success!",
+              "status": 201
             }
           ];
           res.statusCode = 201;
@@ -108,7 +110,8 @@ export default class Controller{
         if(error){
           var response = [
             {
-              "message": "PUT operation failed!"
+              "message": "PUT operation failed!",
+              "status": 400
             },
           ];
           res.statusCode = 400;
@@ -117,7 +120,8 @@ export default class Controller{
         }else{
           var response = [
             {
-              "message": "PUT operation success!"
+              "message": "PUT operation success!",
+              "status": 200
             }
           ];
           res.statusCode = 200;
@@ -138,7 +142,8 @@ export default class Controller{
       if(error){
         var response = [
           {
-            "message": "DELETE operation failed!"
+            "message": "DELETE operation failed!",
+            "status": 400
           },
         ];
         res.statusCode = 400;
@@ -147,7 +152,8 @@ export default class Controller{
       }else{
         var response = [
           {
-            "message": "DELETE operation success!"
+            "message": "DELETE operation success!",
+            "status": 200
           }
         ];
         res.statusCode = 200;
@@ -160,9 +166,9 @@ export default class Controller{
   invalidUrl(req, res){
     var response = [
       {
-      "message": "oops! that is a wrong endpoint, here are the available endpoints "
-      },
-      availableEndpoints
+      "message": "wrong endpoint",
+      "status": 404
+      }
     ]
     res.statusCode = 404;
     res.setHeader('content-Type', 'Application/json');

@@ -5,6 +5,7 @@
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "mocha": "^8.2.1",
+    "mocha-suppress-logs": "^0.2.0",
     "mysql": "^2.18.1"
   },
   "scripts": {
