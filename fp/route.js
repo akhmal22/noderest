@@ -25,7 +25,7 @@ export default function server(engine){
       //console.info('end:\n' + util.inspect(process.memoryUsage()));
       var memEnd = process.memoryUsage().heapUsed;
       let hrEnd = process.hrtime(hrStart);
-      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +", "+ (memEnd - memStart) + ", " + "GET");
+      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +","+ (memEnd - memStart) + "," + "GET");
     }
     // POST endpoint
     else if(req.url == '/criminal' && req.method === 'POST') {
@@ -59,7 +59,7 @@ export default function server(engine){
       //console.info('end:\n' + util.inspect(process.memoryUsage()));
       var memEnd = process.memoryUsage().heapUsed;
       let hrEnd = process.hrtime(hrStart);
-      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +", "+ (memEnd - memStart) + ", " + "POST");
+      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +","+ (memEnd - memStart) + "," + "POST");
     }
     // PUT endpoint
     else if(req.url.match(/\/criminal\/[0-9]+/) !== null && req.method === 'PUT'){
@@ -94,7 +94,7 @@ export default function server(engine){
       //console.info('end:\n' + util.inspect(process.memoryUsage()));
       var memEnd = process.memoryUsage().heapUsed;
       let hrEnd = process.hrtime(hrStart);
-      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +", "+ (memEnd - memStart) + ", " + "PUT");
+      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +","+ (memEnd - memStart) + "," + "PUT");
     }
     // delete endpoint
     else if(req.url.match(/\/criminal\/[0-9]+/) !== null && req.method === 'DELETE'){
@@ -120,7 +120,7 @@ export default function server(engine){
       //console.info('end:\n' + util.inspect(process.memoryUsage()));
       var memEnd = process.memoryUsage().heapUsed;
       let hrEnd = process.hrtime(hrStart);
-      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +", "+ (memEnd - memStart) + ", " + "DELETE");
+      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +","+ (memEnd - memStart) + "," + "DELETE");
     }
     // invalid URL
     else {
@@ -136,7 +136,7 @@ export default function server(engine){
       //console.info('end:\n' + util.inspect(process.memoryUsage()));
       var memEnd = process.memoryUsage().heapUsed;
       let hrEnd = process.hrtime(hrStart);
-      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +", "+ (memEnd - memStart));
+      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +", "+ (memEnd - memStart) + "," + "DELETE");
     }
   })
 }

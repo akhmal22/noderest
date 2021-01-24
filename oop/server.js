@@ -4,5 +4,5 @@ const port = 3000;
 import server from './route.js'; // imports the routing file
 
 server.listen(port, hostname, () => {
-  console.log("Time, Memory");
+  console.log("Time,Memory,Method");
 });

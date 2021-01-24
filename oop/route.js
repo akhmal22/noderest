@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
     //console.info('end:\n' + util.inspect(process.memoryUsage()));
     var memEnd = process.memoryUsage().heapUsed;
     let hrEnd = process.hrtime(hrStart);
-    console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +", "+ (memEnd - memStart) + ", " + "GET");
+    console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +","+ (memEnd - memStart) + "," + "GET");
   }
 
   // POST endpoint
@@ -37,7 +37,7 @@ const server = http.createServer((req, res) => {
     //console.info('end:\n' + util.inspect(process.memoryUsage()));
     var memEnd = process.memoryUsage().heapUsed;
     let hrEnd = process.hrtime(hrStart);
-    console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +", "+ (memEnd - memStart) + ", " + "POST");
+    console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +","+ (memEnd - memStart) + "," + "POST");
   }
 
   else if(req.url.match(/\/criminal\/[0-9]+/) !== null && req.method === 'PUT'){
@@ -51,7 +51,7 @@ const server = http.createServer((req, res) => {
     //console.info('end:\n' + util.inspect(process.memoryUsage()));
     var memEnd = process.memoryUsage().heapUsed;
     let hrEnd = process.hrtime(hrStart);
-    console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +", "+ (memEnd - memStart) + ", " + "PUT");
+    console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +","+ (memEnd - memStart) + "," + "PUT");
   }
 
   else if(req.url.match(/\/criminal\/[0-9]+/) !== null && req.method === 'DELETE'){
@@ -65,7 +65,7 @@ const server = http.createServer((req, res) => {
     //console.info('end:\n' + util.inspect(process.memoryUsage()));
     var memEnd = process.memoryUsage().heapUsed;
     let hrEnd = process.hrtime(hrStart);
-    console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +", "+ (memEnd - memStart) + ", " + "DELETE");
+    console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +","+ (memEnd - memStart) + "," + "DELETE");
   }
 
   // invalid URL
@@ -80,7 +80,7 @@ const server = http.createServer((req, res) => {
     //console.info('end:\n' + util.inspect(process.memoryUsage()));
     var memEnd = process.memoryUsage().heapUsed;
     let hrEnd = process.hrtime(hrStart);
-    console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +", "+ (memEnd - memStart));
+    console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +","+ (memEnd - memStart) + "," + "INVALID");
   }
 })
 
