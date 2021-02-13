@@ -1,16 +1,12 @@
-import {getQuery, postQuery, putQuery, deleteQuery, invalidUrl } from './controller.js';
+import * as control from './controller.js';
 import util from 'util';
 const NS_PER_SEC = 1e9;
 
 export default function server(engine){
   return engine.createServer((req, res) => {
-    if(req.url == '/criminal/all' && req.method === 'GET') {
-      //console.log('Request type: ' + req.method + ' Endpoint: ' + req.url);
-      var hrStart = process.hrtime();
-      var memStart = process.memoryUsage().heapUsed;
-      //console.info('start:\n' + util.inspect(process.memoryUsage()));
-      // --- GET function call ---
-      getQuery(function(error, data){
+    // 1. GET see all five rows in criminal ('/criminal/all')
+    if(req.url.match(/\/criminal\/all+/) !== null && req.method === 'GET') {
+      control.getAllFive(function(error, data){
         var response = [];
         if(error){
           res.statusCode = 400;
@@ -21,19 +17,9 @@ export default function server(engine){
         res.setHeader('content-Type', 'Application/json');
         res.end(JSON.stringify(response));
       });
-      // --- end of function call ---
-      //console.info('end:\n' + util.inspect(process.memoryUsage()));
-      var memEnd = process.memoryUsage().heapUsed;
-      let hrEnd = process.hrtime(hrStart);
-      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +","+ (memEnd - memStart) + "," + "GET");
     }
-    // POST endpoint
+    // 2. POST add a row to criminal ('/criminal')
     else if(req.url == '/criminal' && req.method === 'POST') {
-      //console.log('Request type: ' + req.method + ' Endpoint: ' + req.url);
-      var hrStart = process.hrtime();
-      var memStart = process.memoryUsage().heapUsed;
-      //console.info('start:\n' + util.inspect(process.memoryUsage()));
-      // --- POST function call ---
       var body = '';
 
       req.on('data',  function (chunk) {
@@ -42,7 +28,7 @@ export default function server(engine){
 
       req.on('end', function(){
         var postBody = JSON.parse(body);
-        postQuery(postBody, function(error, data){
+        control.postAddArow(postBody, function(error, data){
           var response = [];
           if(error){
             response = data;
@@ -55,19 +41,9 @@ export default function server(engine){
           res.end(JSON.stringify(response));
         })
       })
-      // --- end of function call ---
-      //console.info('end:\n' + util.inspect(process.memoryUsage()));
-      var memEnd = process.memoryUsage().heapUsed;
-      let hrEnd = process.hrtime(hrStart);
-      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +","+ (memEnd - memStart) + "," + "POST");
     }
-    // PUT endpoint
-    else if(req.url.match(/\/criminal\/[0-9]+/) !== null && req.method === 'PUT'){
-      //console.log('Request type: ' + req.method + ' Endpoint: ' + req.url);
-      var hrStart = process.hrtime();
-      var memStart = process.memoryUsage().heapUsed;
-      //console.info('start:\n' + util.inspect(process.memoryUsage()));
-      // --- PUT function call ---
+    // 3. PUT modify a criminal's row's status ('/criminal/status/:id')
+    else if(req.url.match(/\/criminal\/status\/[0-9]+/) !== null && req.method === 'PUT'){
       var body = '';
       var params = /[^/]*$/.exec(req.url)[0];
 
@@ -77,7 +53,7 @@ export default function server(engine){
 
       req.on('end', function(){
         var putBody = JSON.parse(body);
-        putQuery(putBody, params, function(error, data){
+        control.putACriminalsStatus(putBody, params, function(error, data){
           var response = [];
           if(error){
             response = data;
@@ -90,21 +66,11 @@ export default function server(engine){
           res.end(JSON.stringify(response));
         })
       })
-      // --- end of function call ---
-      //console.info('end:\n' + util.inspect(process.memoryUsage()));
-      var memEnd = process.memoryUsage().heapUsed;
-      let hrEnd = process.hrtime(hrStart);
-      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +","+ (memEnd - memStart) + "," + "PUT");
     }
-    // delete endpoint
+    // 4. DELETE delete a row from criminal ('/criminal/:id')
     else if(req.url.match(/\/criminal\/[0-9]+/) !== null && req.method === 'DELETE'){
-      //console.log('Request type: ' + req.method + ' Endpoint: ' + req.url);
-      var hrStart = process.hrtime();
-      var memStart = process.memoryUsage().heapUsed;
-      //console.info('start:\n' + util.inspect(process.memoryUsage()));
-      // --- DELETE function call ---
       var params = /[^/]*$/.exec(req.url)[0];
-      deleteQuery(params, function(error, data){
+      control.deleteARow(params, function(error, data){
         var response = [];
         if(error){
           response = data;
@@ -116,27 +82,142 @@ export default function server(engine){
         res.setHeader('content-Type', 'Application/json');
         res.end(JSON.stringify(response));
       })
-      // --- end of function call ---
-      //console.info('end:\n' + util.inspect(process.memoryUsage()));
-      var memEnd = process.memoryUsage().heapUsed;
-      let hrEnd = process.hrtime(hrStart);
-      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +","+ (memEnd - memStart) + "," + "DELETE");
+    }
+    // 5. GET see a criminal's row's based on id ('/criminal/:id')
+    else if(req.url.match(/\/criminal\/[0-9]+/) !== null && req.method === 'GET'){
+      var params = /[^/]*$/.exec(req.url)[0];
+      control.getACriminal(params, function(error, data){
+        var response = [];
+        if(error){
+          res.statusCode = 400;
+        }else{
+          response = data;
+          res.statusCode = 200;
+        }
+        res.setHeader('content-Type', 'Application/json');
+        res.end(JSON.stringify(response));
+      });
+    }
+    // 6. PATCH modify a criminal's row's status ('/criminal/status/:id')
+    else if(req.url.match(/\/criminal\/status\/[0-9]+/) !== null && req.method === 'PATCH'){
+      var body = '';
+      var params = /[^/]*$/.exec(req.url)[0];
+
+      req.on('data',  function (chunk) {
+        body += chunk;
+      });
+
+      req.on('end', function(){
+        var patchBody = JSON.parse(body);
+        control.patchACriminalsStatus(patchBody, params, function(error, data){
+          var response = [];
+          if(error){
+            response = data;
+            res.statusCode = 400;
+          }else{
+            response = data;
+            res.statusCode = 200;
+          }
+          res.setHeader('content-Type', 'Application/json');
+          res.end(JSON.stringify(response));
+        })
+      })
+    }
+    // 7. HEAD see a criminal's row's based on id ('/criminal/:id')
+    else if(req.url.match(/\/criminal\/[0-9]+/) !== null && req.method === 'HEAD'){
+      var params = /[^/]*$/.exec(req.url)[0];
+      control.headACriminal(params, function(error, data){
+        var response = [];
+        if(error){
+          res.statusCode = 400;
+        }else{
+          response = data;
+          res.statusCode = 200;
+        }
+        res.setHeader('content-Type', 'Application/json');
+        res.end(JSON.stringify(response));
+      });
+    }
+    // 8. PUT modify a criminal's row's act ('/criminal/act/:id')
+    else if(req.url.match(/\/criminal\/act\/[0-9]+/) !== null && req.method === 'PUT'){
+      var body = '';
+      var params = /[^/]*$/.exec(req.url)[0];
+
+      req.on('data',  function (chunk) {
+        body += chunk;
+      });
+
+      req.on('end', function(){
+        var putBody = JSON.parse(body);
+        control.putACriminalsAct(putBody, params, function(error, data){
+          var response = [];
+          if(error){
+            response = data;
+            res.statusCode = 400;
+          }else{
+            response = data;
+            res.statusCode = 200;
+          }
+          res.setHeader('content-Type', 'Application/json');
+          res.end(JSON.stringify(response));
+        })
+      })
+    }
+    // 9. POST modify a criminal's row's act ('/criminal/act/:id')
+    else if(req.url.match(/\/criminal\/act\/[0-9]+/) !== null && req.method === 'POST'){
+      var body = '';
+      var params = /[^/]*$/.exec(req.url)[0];
+
+      req.on('data',  function (chunk) {
+        body += chunk;
+      });
+
+      req.on('end', function(){
+        var postBody = JSON.parse(body);
+        control.postACriminalsAct(postBody, params, function(error, data){
+          var response = [];
+          if(error){
+            response = data;
+            res.statusCode = 400;
+          }else{
+            response = data;
+            res.statusCode = 200;
+          }
+          res.setHeader('content-Type', 'Application/json');
+          res.end(JSON.stringify(response));
+        })
+      })
+    }
+    // 10. PATCH modify a criminal's row's act ('/criminal/act/:id')
+    else if(req.url.match(/\/criminal\/act\/[0-9]+/) !== null && req.method === 'PATCH'){
+      var body = '';
+      var params = /[^/]*$/.exec(req.url)[0];
+
+      req.on('data',  function (chunk) {
+        body += chunk;
+      });
+
+      req.on('end', function(){
+        var patchBody = JSON.parse(body);
+        control.patchACriminalsAct(patchBody, params, function(error, data){
+          var response = [];
+          if(error){
+            response = data;
+            res.statusCode = 400;
+          }else{
+            response = data;
+            res.statusCode = 200;
+          }
+          res.setHeader('content-Type', 'Application/json');
+          res.end(JSON.stringify(response));
+        })
+      })
     }
     // invalid URL
     else {
-      //console.log('Request type: ' + req.method + ' Endpoint: ' + req.url);
-      var hrStart = process.hrtime();
-      var memStart = process.memoryUsage().heapUsed;
-      //console.info('start:\n' + util.inspect(process.memoryUsage()));
-      // --- invalidUrl function call ---
       res.statusCode = 404;
       res.setHeader('content-Type', 'Application/json');
-      res.end(JSON.stringify(invalidUrl()));
-      // --- end of function call ---
-      //console.info('end:\n' + util.inspect(process.memoryUsage()));
-      var memEnd = process.memoryUsage().heapUsed;
-      let hrEnd = process.hrtime(hrStart);
-      console.log(hrEnd[0] * NS_PER_SEC + hrEnd[1] +", "+ (memEnd - memStart) + "," + "DELETE");
+      res.end(JSON.stringify(control.invalidUrl()));
     }
   })
 }
